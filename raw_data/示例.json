@@ -1,0 +1,29 @@
+{
+  "input": "本次通话纠正场站、线路后翻译文本",
+  "faulty_call": "0/1",
+  "extract": {
+    "fault_equipment": "故障设备",
+    "fault_time": "故障时间",
+    "region": "调管范围",
+    "voltage_level": "电压等级",
+    "weather_condition": "天气情况",
+    "fault_reason_and_check_result": "故障原因及检查结果",
+    "fault_recovery_time": "故障恢复时间",
+    "illustrate": "处置详情",
+    "line_name": "线路名称",
+    "power_supply_time": "送电时间",
+    "fault_phase": "故障相别",
+    "protect_info": "保护信息",
+    "plant_station_name": "厂站名称",
+    "bus_name": "母线名称",
+    "bus_type": "母线类型",
+    "handling_status": "处理情况",
+    "detailed_description": "详细情况",
+    "expecteddefect_elimination_time": "预计消缺时间",
+    "protection_action": "继电保护动作情况",
+    "trip_details": "故障详情",
+    "unit_num": "设备编号",
+    "manufacturer": "设备厂家",
+    "production_date": "投产年月"
+  }
+}

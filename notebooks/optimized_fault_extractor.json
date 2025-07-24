@@ -1,0 +1,225 @@
+{
+  "predict.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "input": "你好陕西耿旭东。西北何云瑞，那个咸东现在故障信息核的咋样了？已经通知两侧正在检查了，两次都与运维人员正在检查。嗯，哪一项哪一项跳了？目前还没有报，这个还正在核查了。项别还没出来嘛。对。等我再了解一下。这这个地区平衡核的咋样了？地区的平衡核的怎么样了？那个你说是。地区的平衡有没有问题？我们正在核正在行，正在核。对。对。对。影响是吧，影响跳闸重合失败是吧，还是重合闸没动作。22重合闸这个我核实一下。从失败了，对重合闸重合失败了。我不成功，是吧，好嗯。对对对？",
+        "fault_equipment": "无",
+        "fault_time": "无",
+        "region": "陕西省",
+        "voltage_level": "无",
+        "weather_condition": "无",
+        "fault_reason_and_check_result": "无",
+        "fault_recovery_time": "无",
+        "illustrate": "正在核查故障信息，通知两侧检查",
+        "line_name": "咸东",
+        "power_supply_time": "无",
+        "fault_phase": "无",
+        "protect_info": "无",
+        "plant_station_name": "无",
+        "bus_name": "无",
+        "bus_type": "无",
+        "handling_status": "正在核查",
+        "detailed_description": "跳闸重合失败",
+        "expecteddefect_elimination_time": "无",
+        "protection_action": "重合闸重合失败",
+        "trip_details": "跳闸重合失败",
+        "unit_num": "无",
+        "manufacturer": "无",
+        "production_date": "无"
+      },
+      {
+        "input": "这会。你好通信调度刘云山有个检修申请完工。哪个？要是2025、0325。西北宁夏杠11。0325西北杠宁夏杠11是吧？对。这有一二次配合的。没有。钟表一线的工作是吧？对。具备报完工条件。好确认工作已经结束，具备报完工条件是吧，嗯，通信您是。李自成。调度机构要会受理完工完工时间记。21、.03。好的好再见。",
+        "fault_equipment": "0325西北杠宁夏杠11",
+        "fault_time": "无",
+        "region": "无",
+        "voltage_level": "无",
+        "weather_condition": "无",
+        "fault_reason_and_check_result": "无",
+        "fault_recovery_time": "21、.03",
+        "illustrate": "无",
+        "line_name": "钟表一线",
+        "power_supply_time": "无",
+        "fault_phase": "无",
+        "protect_info": "无",
+        "plant_station_name": "无",
+        "bus_name": "无",
+        "bus_type": "无",
+        "handling_status": "确认工作已经结束，具备报完工条件",
+        "detailed_description": "无",
+        "expecteddefect_elimination_time": "无",
+        "protection_action": "无",
+        "trip_details": "无",
+        "unit_num": "无",
+        "manufacturer": "无",
+        "production_date": "无"
+      },
+      {
+        "input": "喂，你好三塘湖站7点呀。这块会你要回令是吧？对回令。你说。现在回令网调口令操作单位三塘湖变操作任务投入750千伏Ⅰ母姆线CSC150C-DA-G型母线保护十十十九点06分。现在Ⅰ母的两套母线保护运行正常是吧？对运行正常。你啥时候改另一套呢？我现在就申请退另一套的。稍等。保护装置是。471。0C-DA-J。冀B。750。对。杠D。好。确认一下。750千伏Ⅰ母的另一套保护运行正常具备退出这第750C-D-G母线保护的条件是吧。是具备。好再给你下令网调口令操作单位三塘湖变操作内容退出750千伏Ⅰ母SSB750C-A-G母线保护下令时间19点07分请复诵。现在向您复诵网调口令操作单位三塘湖变操作任务退出750千伏。S750C-D-G型母线保护时间。9点07分。没问题吧。没问题。没问题，立即执行。好收到。",
+        "fault_equipment": "无",
+        "fault_time": "无",
+        "region": "无",
+        "voltage_level": "750千伏",
+        "weather_condition": "无",
+        "fault_reason_and_check_result": "无",
+        "fault_recovery_time": "无",
+        "illustrate": "投入750千伏Ⅰ母姆线CSC150C-DA-G型母线保护，退出750千伏Ⅰ母SSB750C-A-G母线保护",
+        "line_name": "无",
+        "power_supply_time": "无",
+        "fault_phase": "无",
+        "protect_info": "无",
+        "plant_station_name": "三塘湖站",
+        "bus_name": "750千伏Ⅰ母姆线CSC150C-DA-G型母线",
+        "bus_type": "无",
+        "handling_status": "保护运行正常",
+        "detailed_description": "无",
+        "expecteddefect_elimination_time": "无",
+        "protection_action": "投入750千伏Ⅰ母姆线CSC150C-DA-G型母线保护,退出750千伏Ⅰ母SSB750C-A-G母线保护",
+        "trip_details": "无",
+        "unit_num": "无",
+        "manufacturer": "无",
+        "production_date": "无"
+      },
+      {
+        "input": "喂，你好。我给您汇报一下已经拉开了20267。是时间时间。时间20点17分。20点17文科预计几个几个小时可以恢复。嗯，这个。这个不好说得看。",
+        "fault_equipment": "20267",
+        "fault_time": "20点17分",
+        "region": "无",
+        "voltage_level": "无",
+        "weather_condition": "无",
+        "fault_reason_and_check_result": "无",
+        "fault_recovery_time": "无",
+        "illustrate": "无",
+        "line_name": "无",
+        "power_supply_time": "无",
+        "fault_phase": "无",
+        "protect_info": "无",
+        "plant_station_name": "无",
+        "bus_name": "无",
+        "bus_type": "无",
+        "handling_status": "无",
+        "detailed_description": "无",
+        "expecteddefect_elimination_time": "无",
+        "protection_action": "无",
+        "trip_details": "无",
+        "unit_num": "无",
+        "manufacturer": "无",
+        "production_date": "无"
+      }
+    ],
+    "signature": {
+      "instructions": "从故障类通信文本中提取20个结构化字段",
+      "fields": [
+        {
+          "prefix": "Input:",
+          "description": "故障类通信文本"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Fault Equipment:",
+          "description": "故障设备"
+        },
+        {
+          "prefix": "Fault Time:",
+          "description": "故障时间"
+        },
+        {
+          "prefix": "Region:",
+          "description": "调管范围"
+        },
+        {
+          "prefix": "Voltage Level:",
+          "description": "电压等级"
+        },
+        {
+          "prefix": "Weather Condition:",
+          "description": "天气情况"
+        },
+        {
+          "prefix": "Fault Reason And Check Result:",
+          "description": "故障原因及检查结果"
+        },
+        {
+          "prefix": "Fault Recovery Time:",
+          "description": "故障恢复时间"
+        },
+        {
+          "prefix": "Illustrate:",
+          "description": "处置详情"
+        },
+        {
+          "prefix": "Line Name:",
+          "description": "线路名称"
+        },
+        {
+          "prefix": "Power Supply Time:",
+          "description": "送电时间"
+        },
+        {
+          "prefix": "Fault Phase:",
+          "description": "故障相别"
+        },
+        {
+          "prefix": "Protect Info:",
+          "description": "保护信息"
+        },
+        {
+          "prefix": "Plant Station Name:",
+          "description": "厂站名称"
+        },
+        {
+          "prefix": "Bus Name:",
+          "description": "母线名称"
+        },
+        {
+          "prefix": "Bus Type:",
+          "description": "母线类型"
+        },
+        {
+          "prefix": "Handling Status:",
+          "description": "处理情况"
+        },
+        {
+          "prefix": "Detailed Description:",
+          "description": "详细情况"
+        },
+        {
+          "prefix": "Expecteddefect Elimination Time:",
+          "description": "预计消缺时间"
+        },
+        {
+          "prefix": "Protection Action:",
+          "description": "继电保护动作情况"
+        },
+        {
+          "prefix": "Trip Details:",
+          "description": "故障详情"
+        },
+        {
+          "prefix": "Unit Num:",
+          "description": "设备编号"
+        },
+        {
+          "prefix": "Manufacturer:",
+          "description": "设备厂家"
+        },
+        {
+          "prefix": "Production Date:",
+          "description": "投产年月"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.9",
+      "dspy": "2.6.27",
+      "cloudpickle": "3.1"
+    }
+  }
+}

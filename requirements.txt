@@ -1,0 +1,6 @@
+dspy
+openai
+python-dotenv
+scikit_learn
+torch==2.5.1+cu124
+transformers==4.53.2
