@@ -7,10 +7,19 @@ class ClassificationSignature(dspy.Signature):
     label = dspy.OutputField(desc="分类标签，故障或非故障")
 
 
-class FaultClassifier(dspy.Module):
+class FaultClassifierPredict(dspy.Module):
     def __init__(self):
         super().__init__()
         self.predict = dspy.Predict(ClassificationSignature)
+
+    def forward(self, input):
+        return self.predict(input=input)
+
+
+class FaultClassifierChainOfThought(dspy.Module):
+    def __init__(self):
+        super().__init__()
+        self.predict = dspy.ChainOfThought(ClassificationSignature)
 
     def forward(self, input):
         return self.predict(input=input)

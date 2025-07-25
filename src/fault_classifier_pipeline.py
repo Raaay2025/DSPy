@@ -6,7 +6,7 @@ from dspy.teleprompt import MIPROv2
 from dspy.evaluate import Evaluate
 from sklearn.model_selection import train_test_split
 from dotenv import load_dotenv
-
+from src.dsp_model import *
 
 def read_json_file(file_path):
     """
@@ -109,16 +109,7 @@ class ClassificationSignature(dspy.Signature):
     label = dspy.OutputField(desc="分类标签，“故障”或“非故障”")
 
 
-class FaultClassifier(dspy.Module):
-    def __init__(self):
-        super().__init__()
-        self.predict = dspy.ChainOfThought(ClassificationSignature)
-
-    def forward(self, input):
-        return self.predict(input=input)
-
-
-def configure_language_model():
+def configure_language_model_cot():
     """
     配置 Ollama 语言模型。
     """
@@ -132,7 +123,25 @@ def configure_language_model():
     )
     dspy.configure(lm=lm)
 
-    model = FaultClassifier()
+    model = FaultClassifierChainOfThought()
+    return model
+
+
+def configure_language_model_predict():
+    """
+    配置 Ollama 语言模型。
+    """
+    load_dotenv()  # 加载 .env 文件中的变量
+
+    lm = dspy.LM(
+        'ollama_chat/qwen2.5:32b',
+        api_base=os.getenv("OLLAMA_A800_API_BASE"),
+        api_key='',
+        cache=False
+    )
+    dspy.configure(lm=lm)
+
+    model = FaultClassifierPredict()
     return model
 
 
@@ -160,46 +169,45 @@ def train_model_bfswrs(model, train_set):
     return optimized_model
 
 
-def train_model_MIPROv2(model, train_set, val_set):
+def train_model_v2(model, train_set):
     """
     使用 MIPROv2 优化模型
     :param model: 待优化的模型（FaultClassifier 实例）
     :param train_set: DSPy Example 列表
-    :param val_set: 验证集
     :return: 优化后的模型
     """
 
     # MIPROv2 初始化参数
     # 用于初始化优化器，不会在 compile 阶段动态改变
     init_config = dict(
-        metric=metric,                    # 评估函数，判断预测是否正确（必填）
-        max_bootstrapped_demos=8,         # 每个样本中使用的自举示例数（推荐 6~8）
-        max_labeled_demos=8,              # 每个样本中使用的标注示例数（推荐 6~8）
-        num_candidates=40,                # 每轮生成的候选 prompt 数量（推荐 30~50）
-        num_threads=10,                   # 并行线程数（根据 CPU 核心数调整）
-        init_temperature=0.7,             # 生成 prompt 的温度（降低温度让 prompt 更稳定）
-        seed=42,                          # 随机种子（保证可复现）
-        verbose=True,                     # 显示优化过程（调试时建议开启）
-        track_stats=True,                 # 是否记录统计信息（用于分析优化过程）
-        auto=None,                        # 设置为 None 以手动配置参数
-        max_errors=10,                    # 最大错误容忍数（防止优化过程崩溃）
-        log_dir="logs/mipro_runs"         # 日志保存路径（用于记录 prompt 演变）
+        metric=metric,  # 评估函数，判断预测是否正确（必填）
+        max_bootstrapped_demos=8,  # 每个样本中使用的自举示例数（推荐 6~8）
+        max_labeled_demos=8,  # 每个样本中使用的标注示例数（推荐 6~8）
+        num_candidates=40,  # 每轮生成的候选 prompt 数量（推荐 30~50）
+        num_threads=10,  # 并行线程数（根据 CPU 核心数调整）
+        init_temperature=0.7,  # 生成 prompt 的温度（降低温度让 prompt 更稳定）
+        seed=42,  # 随机种子（保证可复现）
+        verbose=True,  # 显示优化过程（调试时建议开启）
+        track_stats=True,  # 是否记录统计信息（用于分析优化过程）
+        auto=None,  # 设置为 None 以手动配置参数
+        max_errors=10,  # 最大错误容忍数（防止优化过程崩溃）
+        log_dir="logs/mipro_runs"  # 日志保存路径（用于记录 prompt 演变）
     )
 
     # MIPROv2 编译参数
     # 用于控制优化过程中的训练行为
     compile_config = dict(
-        num_trials=40,                    # 总共优化多少轮（推荐 30~50）
-        minibatch=True,                   # 使用小批量验证（适用于小样本数据）
-        minibatch_size=30,                # 小批量大小（推荐 20~30，防止资源占用过高）
-        minibatch_full_eval_steps=10,     # 每隔多少步进行一次全量验证（推荐 5~10）
-        program_aware_proposer=True,      # 使用程序感知的 proposer（提升 prompt 质量）
-        data_aware_proposer=True,         # 使用数据感知的 proposer（利用数据特征）
-        view_data_batch_size=10,          # 查看数据的批量大小（影响 proposer 的上下文）
-        tip_aware_proposer=True,          # 使用 TIP 意识 proposer（提升泛化能力）
-        fewshot_aware_proposer=True,      # 使用少样本意识 proposer（提升 few-shot 效果）
-        requires_permission_to_run=False, # 不需要权限运行（用于跳过权限检查）
-        provide_traceback=None            # 不提供 traceback（用于控制错误输出）
+        num_trials=40,  # 总共优化多少轮（推荐 30~50）
+        minibatch=True,  # 使用小批量验证（适用于小样本数据）
+        minibatch_size=30,  # 小批量大小（推荐 20~30，防止资源占用过高）
+        minibatch_full_eval_steps=10,  # 每隔多少步进行一次全量验证（推荐 5~10）
+        program_aware_proposer=True,  # 使用程序感知的 proposer（提升 prompt 质量）
+        data_aware_proposer=True,  # 使用数据感知的 proposer（利用数据特征）
+        view_data_batch_size=10,  # 查看数据的批量大小（影响 proposer 的上下文）
+        tip_aware_proposer=True,  # 使用 TIP 意识 proposer（提升泛化能力）
+        fewshot_aware_proposer=True,  # 使用少样本意识 proposer（提升 few-shot 效果）
+        requires_permission_to_run=False,  # 不需要权限运行（用于跳过权限检查）
+        provide_traceback=None  # 不提供 traceback（用于控制错误输出）
     )
 
     # 初始化优化器
@@ -210,7 +218,6 @@ def train_model_MIPROv2(model, train_set, val_set):
     optimized_model = teleprompter.compile(
         student=model,
         trainset=train_set,
-        valset=val_set,
         **compile_config
     )
     print("模型优化完成")
@@ -240,7 +247,7 @@ def load_model(model_path="optimized_fault_classifier.json"):
     """
     加载模型并恢复状态。
     """
-    loaded_model = FaultClassifier()
+    loaded_model = FaultClassifierChainOfThought()
 
     with open(model_path, 'r', encoding='utf-8') as f:
         state = json.load(f)
@@ -272,10 +279,9 @@ def main():
     train_set, val_set = build_dspy_datasets(X_train, y_train, X_val, y_val)
 
     # 配置语言模型
-    model = configure_language_model()
+    model = configure_language_model_cot()
 
     # 训练优化模型
-    # optimized_model = train_model_MIPROv2(model, train_set, val_set)
     optimized_model = train_model_bfswrs(model, train_set)
 
     # 评估优化模型
@@ -298,5 +304,6 @@ def main():
     evaluate_model(loaded_model, val_set)
 
 
+# 使用ChainOfThought + BootstrapFewShotWithRandomSearch 优化模型
 if __name__ == "__main__":
     main()

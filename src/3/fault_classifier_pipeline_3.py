@@ -3,7 +3,7 @@ from src.fault_classifier_pipeline import *
 
 def main():
     # 获取项目根目录
-    project_root = os.path.dirname(os.getcwd())
+    project_root = os.path.dirname(os.path.dirname(os.getcwd()))
 
     # 读取数据
     all_data = load_data(project_root)
@@ -15,10 +15,10 @@ def main():
     train_set, val_set = build_dspy_datasets(X_train, y_train, X_val, y_val)
 
     # 配置语言模型
-    model = configure_language_model()
+    model = configure_language_model_predict()
 
     # 训练优化模型
-    optimized_model = train_model_MIPROv2(model, train_set, val_set)
+    optimized_model = train_model_v2(model, train_set)
 
     # 评估优化模型
     evaluate_model(optimized_model, val_set)
@@ -40,5 +40,6 @@ def main():
     evaluate_model(loaded_model, val_set)
 
 
+# Predict + MIPROv2 优化模型
 if __name__ == "__main__":
     main()
