@@ -15,7 +15,7 @@ def main():
     train_set, val_set = build_dspy_datasets(X_train, y_train, X_val, y_val)
 
     # 配置语言模型
-    model = configure_language_model_predict()
+    model = configure_language_model_cot()
 
     # 训练优化模型
     optimized_model = train_model_v2(model, train_set)
@@ -27,7 +27,7 @@ def main():
     save_model(optimized_model)
 
     # 加载模型并进行推理测试
-    loaded_model = load_model_predict()
+    loaded_model = load_model_cot()
     sample_input = "设备无法启动，电源指示灯不亮。"
     prediction = predict(loaded_model, sample_input)
     print(f"输入: {sample_input} -> 预测结果: {prediction}")
@@ -40,6 +40,6 @@ def main():
     evaluate_model(loaded_model, val_set)
 
 
-# Predict + MIPROv2 优化模型
+# ChainOfThought + MIPROv2 优化模型
 if __name__ == "__main__":
     main()

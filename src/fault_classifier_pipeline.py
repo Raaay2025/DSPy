@@ -243,11 +243,25 @@ def save_model(model, path="optimized_fault_classifier.json"):
     print("模型已保存至:", path)
 
 
-def load_model(model_path="optimized_fault_classifier.json"):
+def load_model_cot(model_path="optimized_fault_classifier.json"):
     """
     加载模型并恢复状态。
     """
     loaded_model = FaultClassifierChainOfThought()
+
+    with open(model_path, 'r', encoding='utf-8') as f:
+        state = json.load(f)
+
+    loaded_model.load_state(state)
+    print("模型已成功加载")
+    return loaded_model
+
+
+def load_model_predict(model_path="optimized_fault_classifier.json"):
+    """
+    加载模型并恢复状态。
+    """
+    loaded_model = FaultClassifierPredict()
 
     with open(model_path, 'r', encoding='utf-8') as f:
         state = json.load(f)
@@ -291,7 +305,7 @@ def main():
     save_model(optimized_model)
 
     # 加载模型并进行推理测试
-    loaded_model = load_model()
+    loaded_model = load_model_cot()
     sample_input = "设备无法启动，电源指示灯不亮。"
     prediction = predict(loaded_model, sample_input)
     print(f"输入: {sample_input} -> 预测结果: {prediction}")
