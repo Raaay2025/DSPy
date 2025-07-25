@@ -2,6 +2,7 @@ import os
 import json
 import dspy
 from dspy.teleprompt import BootstrapFewShotWithRandomSearch
+from dspy.teleprompt import MIPROv2
 from dspy.evaluate import Evaluate
 from sklearn.model_selection import train_test_split
 from dotenv import load_dotenv
@@ -105,13 +106,13 @@ def build_dspy_datasets(X_train, y_train, X_val, y_val):
 class ClassificationSignature(dspy.Signature):
     """中文故障分类任务的输入输出定义"""
     input = dspy.InputField(desc="输入文本")
-    label = dspy.OutputField(desc="分类标签，故障或非故障")
+    label = dspy.OutputField(desc="分类标签，“故障”或“非故障”")
 
 
 class FaultClassifier(dspy.Module):
     def __init__(self):
         super().__init__()
-        self.predict = dspy.Predict(ClassificationSignature)
+        self.predict = dspy.ChainOfThought(ClassificationSignature)
 
     def forward(self, input):
         return self.predict(input=input)
@@ -142,7 +143,7 @@ def metric(gold, pred, trace=None):
     return gold.label == pred.label
 
 
-def train_model(model, train_set):
+def train_model_bfswrs(model, train_set):
     """
     使用 BootstrapFewShotWithRandomSearch 优化模型。
     """
@@ -150,11 +151,69 @@ def train_model(model, train_set):
         max_labeled_demos=4,
         max_bootstrapped_demos=4,
         num_candidate_programs=20,
-        num_threads=4
+        num_threads=10
     )
 
     teleprompter = BootstrapFewShotWithRandomSearch(metric=metric, **config)
     optimized_model = teleprompter.compile(model, trainset=train_set)
+
+    return optimized_model
+
+
+def train_model_MIPROv2(model, train_set, val_set):
+    """
+    使用 MIPROv2 优化模型
+    :param model: 待优化的模型（FaultClassifier 实例）
+    :param train_set: DSPy Example 列表
+    :param val_set: 验证集
+    :return: 优化后的模型
+    """
+
+    # MIPROv2 初始化参数
+    # 用于初始化优化器，不会在 compile 阶段动态改变
+    init_config = dict(
+        metric=metric,                    # 评估函数，判断预测是否正确（必填）
+        max_bootstrapped_demos=8,         # 每个样本中使用的自举示例数（推荐 6~8）
+        max_labeled_demos=8,              # 每个样本中使用的标注示例数（推荐 6~8）
+        num_candidates=40,                # 每轮生成的候选 prompt 数量（推荐 30~50）
+        num_threads=10,                   # 并行线程数（根据 CPU 核心数调整）
+        init_temperature=0.7,             # 生成 prompt 的温度（降低温度让 prompt 更稳定）
+        seed=42,                          # 随机种子（保证可复现）
+        verbose=True,                     # 显示优化过程（调试时建议开启）
+        track_stats=True,                 # 是否记录统计信息（用于分析优化过程）
+        auto=None,                        # 设置为 None 以手动配置参数
+        max_errors=10,                    # 最大错误容忍数（防止优化过程崩溃）
+        log_dir="logs/mipro_runs"         # 日志保存路径（用于记录 prompt 演变）
+    )
+
+    # MIPROv2 编译参数
+    # 用于控制优化过程中的训练行为
+    compile_config = dict(
+        num_trials=40,                    # 总共优化多少轮（推荐 30~50）
+        minibatch=True,                   # 使用小批量验证（适用于小样本数据）
+        minibatch_size=30,                # 小批量大小（推荐 20~30，防止资源占用过高）
+        minibatch_full_eval_steps=10,     # 每隔多少步进行一次全量验证（推荐 5~10）
+        program_aware_proposer=True,      # 使用程序感知的 proposer（提升 prompt 质量）
+        data_aware_proposer=True,         # 使用数据感知的 proposer（利用数据特征）
+        view_data_batch_size=10,          # 查看数据的批量大小（影响 proposer 的上下文）
+        tip_aware_proposer=True,          # 使用 TIP 意识 proposer（提升泛化能力）
+        fewshot_aware_proposer=True,      # 使用少样本意识 proposer（提升 few-shot 效果）
+        requires_permission_to_run=False, # 不需要权限运行（用于跳过权限检查）
+        provide_traceback=None            # 不提供 traceback（用于控制错误输出）
+    )
+
+    # 初始化优化器
+    teleprompter = MIPROv2(**init_config)
+
+    print("开始模型优化...")
+    # 执行优化编译
+    optimized_model = teleprompter.compile(
+        student=model,
+        trainset=train_set,
+        valset=val_set,
+        **compile_config
+    )
+    print("模型优化完成")
 
     return optimized_model
 
@@ -210,16 +269,17 @@ def main():
     X_train, X_val, y_train, y_val = split_dataset(all_data)
 
     # 构建 DSPy 数据集
-    trainset, valset = build_dspy_datasets(X_train, y_train, X_val, y_val)
+    train_set, val_set = build_dspy_datasets(X_train, y_train, X_val, y_val)
 
     # 配置语言模型
     model = configure_language_model()
 
     # 训练优化模型
-    optimized_model = train_model(model, trainset)
+    # optimized_model = train_model_MIPROv2(model, train_set, val_set)
+    optimized_model = train_model_bfswrs(model, train_set)
 
     # 评估优化模型
-    evaluate_model(optimized_model, valset)
+    evaluate_model(optimized_model, val_set)
 
     # 保存模型
     save_model(optimized_model)
@@ -232,10 +292,10 @@ def main():
 
     # 模型对比（优化前后）
     print("优化前模块评分：")
-    evaluate_model(model, valset)
+    evaluate_model(model, val_set)
 
     print("优化后模块评分：")
-    evaluate_model(loaded_model, valset)
+    evaluate_model(loaded_model, val_set)
 
 
 if __name__ == "__main__":
